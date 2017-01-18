@@ -14,4 +14,4 @@ structure items are removed to avoid complication.
 
 ## beer_review.csv
 
-This file is used as example to illustrate how to solve parts of homework 1 question 2
+This file can be read into R. 
