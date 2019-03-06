@@ -2,8 +2,11 @@ from collections import Counter
 from numpy import float, int, isnan
 from pandas import DataFrame, read_csv
 from os.path import join
+from sys import stdout
 
-from ChicagoBoothML_Helpy.Print import printflush
+def printflush(*args, **kwargs):
+    print(*args, **kwargs)
+    stdout.flush()
 
 
 def parse_human_activity_recog_data(
@@ -33,10 +36,8 @@ def parse_human_activity_recog_data(
     printflush("   Parsing Unique Input Features' (X's) Names... ", end='')
     X_names_with_duplicates = read_csv(
         join(data_path, X_names_file_name),
-        delim_whitespace=True, header=None, index_col=0).iloc[:, 0]
-    X_name_counts = Counter(X_names_with_duplicates)
-    X_unique_names = list(X_name_counts)
-    X_unique_names.sort()
+        delim_whitespace=True, header=None, index_col=0)[1]
+    X_unique_names = sorted(set(X_names_with_duplicates))    
     printflush('done!')
 
     printflush('   Parsing Train & Test Input Feature Data Sets... ', end='')
@@ -53,12 +54,8 @@ def parse_human_activity_recog_data(
     X_train = DataFrame(index=X_train_with_duplicates.index)
     X_test = DataFrame(index=X_test_with_duplicates.index)
     for x_name in X_unique_names:
-        if X_name_counts[x_name] == 1:
-            X_train[x_name] = X_train_with_duplicates[x_name]
-            X_test[x_name] = X_test_with_duplicates[x_name]
-        else:
-            X_train[x_name] = X_train_with_duplicates[x_name].iloc[:, 0]
-            X_test[x_name] = X_test_with_duplicates[x_name].iloc[:, 0]
+        X_train[x_name] = X_train_with_duplicates[x_name]
+        X_test[x_name] = X_test_with_duplicates[x_name]
     printflush('done!')
 
     printflush('   Removing Input Feature Data Rows with Missing (NaN) Values... ', end='')
